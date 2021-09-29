@@ -1,13 +1,27 @@
 package homework2.task4;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class SimpleHashMap<K, V> {
     private int size;
     private MyNode<K, V>[] table = new MyNode[10];
 
+    private int hash(K key) {
+        return Math.abs(key.hashCode() % table.length);
+    };
+
+    private void grow() {
+        if (size == table.length) {
+            size = (int) (size + size * 1.5);
+            table = Arrays.copyOf(table, size);
+        }
+    }
+
     public V put(K key, V value) {
-        int index = Math.abs(key.hashCode() % table.length);
+        grow();
+
+        int index = hash(key);
 
         if(table[index] == null) {
             table[index] = new MyNode<>(key, value);
@@ -34,7 +48,7 @@ public class SimpleHashMap<K, V> {
     }
 
     public V get(K key) {
-        int index = Math.abs(key.hashCode() % table.length);
+        int index = hash(key);
 
         if(table[index] != null) {
             MyNode<K,V> node = table[index];
@@ -48,6 +62,34 @@ public class SimpleHashMap<K, V> {
         }
 
         return null;
+    }
+
+    public V remove(K key) {
+        V value = get(key);
+
+        int index = hash(key);
+
+        if(table[index] != null) {
+            MyNode<K,V> node = table[index];
+
+            if(node.getKey().equals(key)) { //Если удаляемая нода первая
+                table[index] = node.next;
+                size--;
+                return value;
+            }
+
+            while (node.next != null) { //Если удаляемая нода в середине
+                if (node.next.getKey().equals(key)) {
+                    node.next = node.next.next;
+                    size--;
+                    return value;
+                }
+                node = node.next;
+            }
+
+        }
+
+        return value;
     }
 
     @Override
@@ -108,6 +150,5 @@ public class SimpleHashMap<K, V> {
         }
 
     }
-
 
 }
