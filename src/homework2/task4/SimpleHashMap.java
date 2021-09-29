@@ -11,16 +11,7 @@ public class SimpleHashMap<K, V> {
         return Math.abs(key.hashCode() % table.length);
     };
 
-    private void grow() {
-        if (size == table.length) {
-            size = (int) (size + size * 1.5);
-            table = Arrays.copyOf(table, size);
-        }
-    }
-
     public V put(K key, V value) {
-        grow();
-
         int index = hash(key);
 
         if(table[index] == null) {

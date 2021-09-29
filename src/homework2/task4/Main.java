@@ -18,6 +18,7 @@ public class Main {
         myMap.put("sopt", 16);
 
         System.out.println(myMap);
+        System.out.println(myMap.get("post"));
         System.out.println(myMap.remove("sopt"));
         System.out.println(myMap);
     }
