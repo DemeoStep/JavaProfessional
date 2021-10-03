@@ -1,5 +1,7 @@
 package LinkedList;
 
+import java.util.Iterator;
+
 public class MyLinkedList<E> implements Cloneable {
     private int size = 0;
     private Node<E> first;
@@ -163,11 +165,77 @@ public class MyLinkedList<E> implements Cloneable {
         Node<E> node = jumpTo(index);
         E element = node.element;
 
+        if (size == 1) {
+            this.first = null;
+            this.last = null;
+            size--;
+            return element;
+        }
+
+        if (node == this.first) {
+            this.first = node.next;
+            this.first.prev = null;
+            this.size--;
+            return element;
+        }
+
+        if (node == this.last) {
+            this.last = node.prev;
+            this.last.next = null;
+            this.size--;
+            return element;
+        }
+
         node.next.prev = node.prev;
         node.prev.next = node.next;
 
         return element;
     }
+
+    public boolean remove(Object obj) {
+        if (!contains(obj)) {
+            return false;
+        }
+
+        remove(indexOf(obj));
+        return true;
+    }
+
+    public E set(int index, E element) {
+        Node<E> node = jumpTo(index);
+        E e = node.element;
+
+        node.element = element;
+        return e;
+    }
+
+    public Iter iterator() {
+        return new Iter();
+    }
+
+    private class Iter implements Iterator<E> {
+        private int cursor;
+
+        @Override
+        public boolean hasNext() {
+            return cursor < size;
+        }
+
+        @Override
+        public E next() {
+            Node<E> node = jumpTo(cursor);
+            if (hasNext()) {
+                cursor++;
+            }
+            return node.element;
+        }
+
+        @Override
+        public void remove() {
+            MyLinkedList.this.remove(cursor);
+        }
+    }
+
 
     private Node<E> jumpTo(int index) {
         if (index < 0 || index >= size) throw new ArrayIndexOutOfBoundsException();
