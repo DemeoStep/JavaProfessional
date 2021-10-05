@@ -47,18 +47,8 @@ public class MyLinkedList<E> implements Cloneable {
             return;
         }
 
-        if (index == this.size - 1) {
-            Node<E> newNode = new Node<>(e, this.last, this.last.prev);
-            this.last.prev.next = newNode;
-            this.last.prev = newNode;
-            size++;
-            return;
-        }
-
         if (index == 0) {
-            Node<E> node = new Node<>(e, this.first, null);
-            this.first.prev = node;
-            this.first = node;
+            addFirst(e);
             size++;
             return;
         }
@@ -128,35 +118,30 @@ public class MyLinkedList<E> implements Cloneable {
     }
 
     public int indexOf(Object obj) {
-        int index = -1;
+        Node<E> node = this.first;
 
-        if (contains(obj)) {
-            index = 0;
-            Node<E> node = this.first;
-
-            while (!obj.equals(node.element)) {
-                index++;
-                node = node.next;
+        for (int i = 0; node != null; i++) {
+            if (obj.equals(node.element)) {
+                return i;
             }
+
+            node = node.next;
         }
 
-        return index;
+        return -1;
     }
 
     public int lastIndexOf(Object obj) {
-        int index = -1;
 
-        if (contains(obj)) {
-            index = this.size - 1;
-            Node<E> node = this.last;
-
-            while (!obj.equals(node.element)) {
-                index--;
-                node = node.prev;
+        Node<E> node = this.last;
+        for (int i = size() - 1; node != null; i--) {
+            if (obj.equals(node.element)) {
+                return i;
             }
+            node = node.prev;
         }
 
-        return index;
+        return -1;
     }
 
     public E remove(int index) {
@@ -188,6 +173,7 @@ public class MyLinkedList<E> implements Cloneable {
 
         node.next.prev = node.prev;
         node.prev.next = node.next;
+        size--;
 
         return element;
     }
@@ -214,20 +200,26 @@ public class MyLinkedList<E> implements Cloneable {
     }
 
     private class Iter implements Iterator<E> {
-        private int cursor;
+        private Node<E> cursor;
+
+        Iter() {
+            cursor = first;
+        }
 
         @Override
         public boolean hasNext() {
-            return cursor < size;
+            return cursor != null;
         }
 
         @Override
         public E next() {
-            Node<E> node = jumpTo(cursor);
+            E element = cursor.element;
+
             if (hasNext()) {
-                cursor++;
+                cursor = cursor.next;
             }
-            return node.element;
+
+            return element;
         }
 
         @Override
