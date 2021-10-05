@@ -1,4 +1,4 @@
-package homework5.task4;
+package homework5.add_task;
 
 public class Animal {
     private String name = "Черепаха";
